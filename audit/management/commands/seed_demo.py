@@ -27,7 +27,7 @@ class Command(BaseCommand):
         self.data()
         self.stdout.write(self.style.SUCCESS("DEMO ma‘lumotlar yaratildi."))
 
-      def users(self):
+    def users(self):
         specs = [
             ("admin", "Administrator", "admin", ADMIN_PW, True),
             ("auditor_demo", "Auditor Demo", "auditor", USER_PW, False),
