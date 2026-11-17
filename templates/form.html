@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="card col-xl-9"><div class="card-body">
+<h4 class="mb-3"><i class="bi {{ cfg.icon }}"></i> {{ cfg.single }}: {% if obj %}tahrirlash{% else %}yangi yozuv{% endif %}</h4>
+{% if cfg.intro and key == 'bia' %}<div class="alert alert-info small">{{ cfg.intro|safe }}</div>{% endif %}
+<form method="post" enctype="multipart/form-data" novalidate>{% csrf_token %}
+{% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+<div class="row">
+{% for f in form %}
+  <div class="{% if f.field.widget.input_type == 'textarea' or f.name == 'description' %}col-12{% else %}col-md-6{% endif %} mb-3">
+    {% if f.field.widget.input_type == 'checkbox' %}
+      <div class="form-check">{{ f }}<label class="form-check-label" for="{{ f.id_for_label }}">{{ f.label }}</label></div>
+    {% else %}<label class="form-label fw-semibold" for="{{ f.id_for_label }}">{{ f.label }}{% if f.field.required %} <span class="text-danger">*</span>{% endif %}</label>{{ f }}{% endif %}
+    {% if f.help_text %}<div class="form-text">{{ f.help_text }}</div>{% endif %}
+    {% for e in f.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+  </div>
+{% endfor %}
+</div>
+<button class="btn btn-primary"><i class="bi bi-check-lg"></i> Saqlash</button>
+<a class="btn btn-light" href="{% url 'list' key %}">Bekor qilish</a>
+</form></div></div>
+{% endblock %}

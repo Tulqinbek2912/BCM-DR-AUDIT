@@ -1,0 +1,19 @@
+{% load static %}<!doctype html>
+<html lang="uz"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kirish — BCM & DR AUDIT PRO</title>
+<link rel="stylesheet" href="{% static 'vendor/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'vendor/bi/bootstrap-icons.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/app.css' %}"></head>
+<body class="login-body">
+<div class="login-card">
+  <div class="text-center mb-4"><i class="bi bi-shield-check login-logo"></i>
+    <h3 class="mb-1">BCM & DR AUDIT PRO</h3>
+    <p class="text-muted small mb-0">Biznes uzluksizligi va avariyadan tiklanish xavfsizligi platformasi</p></div>
+  <form method="post">{% csrf_token %}
+    {% if form.errors %}<div class="alert alert-danger py-2">{{ form.non_field_errors|first|default:"Maydonlarni to‘ldiring." }}</div>{% endif %}
+    <div class="mb-3"><label class="form-label">Foydalanuvchi nomi</label>{{ form.username }}</div>
+    <div class="mb-3"><label class="form-label">Parol</label>{{ form.password }}</div>
+    <input type="hidden" name="next" value="{{ next }}">
+    <button class="btn btn-primary w-100"><i class="bi bi-box-arrow-in-right"></i> Kirish</button>
+  </form>
+</div></body></html>

@@ -1,0 +1,46 @@
+{% load static %}<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}BCM & DR AUDIT PRO{% endblock %}</title>
+<link rel="stylesheet" href="{% static 'vendor/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'vendor/bi/bootstrap-icons.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body>
+<aside class="sidebar" id="sidebar">
+  <a class="brand" href="{% url 'dashboard' %}"><i class="bi bi-shield-check"></i><span>BCM & DR<br><b>AUDIT PRO</b></span></a>
+  <nav>
+  {% for title, items in menu %}
+    <div class="nav-title">{{ title }}</div>
+    {% for name, url, icon, active in items %}
+      <a href="{{ url }}" class="nav-item {% if active %}active{% endif %}"><i class="bi {{ icon }}"></i>{{ name }}</a>
+    {% endfor %}
+  {% endfor %}
+  </nav>
+  <div class="user-box">
+    <div><i class="bi bi-person-circle"></i> {{ user.get_full_name|default:user.username }}</div>
+    <small>{{ role_label }}</small>
+    <div class="mt-2 d-flex gap-2">
+      <a class="btn btn-sm btn-outline-light" href="{% url 'password_change' %}" title="Parolni almashtirish"><i class="bi bi-key"></i></a>
+      <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="btn btn-sm btn-outline-light"><i class="bi bi-box-arrow-right"></i> Chiqish</button></form>
+    </div>
+  </div>
+</aside>
+<main class="content">
+  <header class="topbar">
+    <button class="btn btn-light d-lg-none" id="menuBtn"><i class="bi bi-list"></i></button>
+    <nav aria-label="breadcrumb"><ol class="breadcrumb mb-0">
+      {% for label, url in crumbs %}{% if url %}<li class="breadcrumb-item"><a href="{{ url }}">{{ label }}</a></li>{% else %}<li class="breadcrumb-item active">{{ label }}</li>{% endif %}{% endfor %}
+    </ol></nav>
+  </header>
+  <div class="page">
+    {% for m in messages %}<div class="alert alert-{% if m.tags == 'error' %}danger{% else %}{{ m.tags }}{% endif %} alert-dismissible fade show">{{ m }}<button class="btn-close" data-bs-dismiss="alert"></button></div>{% endfor %}
+    {% block body %}{% endblock %}
+  </div>
+  <footer class="foot">BCM & DR AUDIT PRO · Biznes uzluksizligi va avariyadan tiklanish xavfsizligi platformasi · Standartlar tayanch sifatida ishlatiladi, rasmiy sertifikatlash emas.</footer>
+</main>
+<script src="{% static 'vendor/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/app.js' %}"></script>
+{% block scripts %}{% endblock %}
+</body></html>

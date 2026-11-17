@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="d-flex justify-content-between mb-3"><h4><i class="bi bi-cloud-arrow-up"></i> {{ b.name }} {% if b.is_demo %}<span class="badge bg-warning text-dark">DEMO</span>{% endif %}</h4>
+{% if can_write %}<a class="btn btn-outline-primary" href="{% url 'edit' 'zaxira' b.pk %}"><i class="bi bi-pencil"></i> Tahrirlash</a>{% endif %}</div>
+<div class="row g-3"><div class="col-lg-6"><div class="card"><div class="card-body"><dl class="row mb-0">
+  <dt class="col-5">Tashkilot</dt><dd class="col-7">{{ b.organization }}</dd><dt class="col-5">Turi</dt><dd class="col-7">{{ b.backup_type }}</dd>
+  <dt class="col-5">Saqlash joyi</dt><dd class="col-7">{{ b.storage_location }}</dd><dt class="col-5">Chastota</dt><dd class="col-7">{{ b.frequency }}</dd>
+  <dt class="col-5">Oxirgi zaxira</dt><dd class="col-7">{{ b.last_backup|date:"d.m.Y H:i"|default:"—" }}</dd><dt class="col-5">Keyingi zaxira</dt><dd class="col-7">{{ b.next_backup|date:"d.m.Y H:i"|default:"—" }}</dd>
+  <dt class="col-5">Hajmi</dt><dd class="col-7">{{ b.size_gb }} GB</dd><dt class="col-5">Shifrlash</dt><dd class="col-7">{{ b.encrypted|yesno:"Ha,Yo‘q" }}</dd><dt class="col-5">Holati</dt><dd class="col-7">{{ b.status }}</dd>
+</dl></div></div></div>
+<div class="col-lg-6"><div class="card"><div class="card-header">Tekshiruv qaydlari</div><div class="card-body">
+  <div class="alert alert-secondary small">Tizim zaxira fayllarini o‘zi tekshirmaydi. Quyidagi tugmalar faqat tekshiruv <b>haqiqatan bajarilganini</b> mas‘ul shaxs tasdiqlaganini vaqt va ism bilan qayd etadi.</div>
+  <p><b>Yaxlitlik tekshiruvi:</b> {% if b.integrity_checked %}<span class="badge text-bg-success">Tasdiqlangan</span> {{ b.integrity_verified_at|date:"d.m.Y H:i" }} — {{ b.integrity_verified_by }}{% else %}<span class="badge text-bg-secondary">Tekshirilmagan</span>{% endif %}</p>
+  <p><b>Tiklash sinovi:</b> {% if b.restore_tested %}<span class="badge text-bg-success">Tasdiqlangan</span> {{ b.restore_tested_at|date:"d.m.Y H:i" }} — {{ b.restore_tested_by }}{% else %}<span class="badge text-bg-secondary">O‘tkazilmagan</span>{% endif %}</p>
+  {% if can_write %}<div class="d-flex gap-2">
+    <form method="post" action="{% url 'backup_confirm' b.pk 'yaxlitlik' %}" onsubmit="return confirm('Yaxlitlik tekshiruvi haqiqatan bajarilganini tasdiqlaysizmi?')">{% csrf_token %}<button class="btn btn-outline-success btn-sm">Yaxlitlik tekshirilganini tasdiqlash</button></form>
+    <form method="post" action="{% url 'backup_confirm' b.pk 'tiklash' %}" onsubmit="return confirm('Tiklash sinovi haqiqatan o‘tkazilganini tasdiqlaysizmi?')">{% csrf_token %}<button class="btn btn-outline-success btn-sm">Tiklash sinovi o‘tkazilganini tasdiqlash</button></form></div>{% endif %}
+</div></div></div></div>
+{% endblock %}

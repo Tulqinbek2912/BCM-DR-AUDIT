@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="d-flex flex-wrap justify-content-between gap-2 mb-3"><h4><i class="bi bi-clipboard-check"></i> {{ a.title }} {% if a.is_demo %}<span class="badge bg-warning text-dark">DEMO</span>{% endif %}</h4>
+<div class="d-flex gap-2 flex-wrap">
+  {% if can_write %}<a class="btn btn-primary" href="{% url 'audit_fill' a.pk %}"><i class="bi bi-ui-checks"></i> Baholashni to‘ldirish</a>
+  <a class="btn btn-outline-primary" href="{% url 'add' 'tekshiruv' %}?audit={{ a.pk }}"><i class="bi bi-plus"></i> Savol qo‘shish</a>
+  <a class="btn btn-outline-secondary" href="{% url 'edit' 'auditlar' a.pk %}"><i class="bi bi-pencil"></i></a>{% endif %}
+  <a class="btn btn-danger" href="{% url 'report_pdf' a.pk %}"><i class="bi bi-file-earmark-pdf"></i> PDF</a>
+  <a class="btn btn-success" href="{% url 'report_xlsx' a.pk %}"><i class="bi bi-file-earmark-excel"></i> Excel</a></div></div>
+<div class="row g-3 mb-3">
+ <div class="col-lg-5"><div class="card"><div class="card-body"><dl class="row mb-0">
+  <dt class="col-4">Tashkilot</dt><dd class="col-8">{{ a.organization }}</dd><dt class="col-4">Sana</dt><dd class="col-8">{{ a.audit_date|date:"d.m.Y" }}</dd>
+  <dt class="col-4">Holati</dt><dd class="col-8">{{ a.status }}</dd><dt class="col-4">Auditor</dt><dd class="col-8">{{ a.auditor|default:"—" }}</dd>
+  <dt class="col-4">Qamrov</dt><dd class="col-8">{{ a.scope|linebreaksbr }}</dd></dl></div></div></div>
+ <div class="col-lg-7"><div class="card"><div class="card-body">
+  <div class="d-flex align-items-center gap-3"><div class="display-5 fw-bold text-primary">{% if compliance == None %}—{% else %}{{ compliance }}%{% endif %}</div><div><b>Umumiy muvofiqlik</b><br><small class="text-muted">Mos = 100%, Qisman mos = 50%, Mos emas = 0%. «Tegishli emas» va baholanmaganlar hisobga olinmaydi.</small></div></div>
+  <div class="mt-3 d-flex flex-wrap gap-2">{% for k, v in counts.items %}<span class="badge text-bg-light border">{{ k }}: {{ v }}</span>{% endfor %}</div></div></div></div>
+</div>
+{% for c in cats %}
+<div class="card mb-3"><div class="card-header d-flex justify-content-between"><b>{{ c.name }}</b><span>{% if c.pct == None %}baholanmagan{% else %}{{ c.pct }}%{% endif %}</span></div>
+<table class="table mb-0 align-middle"><tbody>{% for i in c.items %}<tr><td style="width:50%">{{ i.question }}<br><small class="text-muted">{{ i.standard_ref }}</small></td>
+<td>{% if i.answer %}<span class="badge text-bg-{% if i.answer == 'Mos' %}success{% elif i.answer == 'Qisman mos' %}warning{% elif i.answer == 'Mos emas' %}danger{% else %}secondary{% endif %}">{{ i.answer }}</span>{% else %}<span class="badge text-bg-light border">Baholanmagan</span>{% endif %}</td>
+<td class="small">{{ i.comment }}{% if i.evidence %} <a href="{% url 'evidence' i.pk %}"><i class="bi bi-paperclip"></i> dalil</a>{% endif %}</td>
+<td class="text-end">{% if can_write %}<a class="btn btn-sm btn-outline-primary" href="{% url 'edit' 'tekshiruv' i.pk %}" title="Izoh va dalil biriktirish"><i class="bi bi-pencil"></i></a>{% endif %}</td></tr>{% endfor %}</tbody></table></div>
+{% empty %}<div class="alert alert-secondary">Bu auditda savollar yo‘q.</div>{% endfor %}
+{% endblock %}

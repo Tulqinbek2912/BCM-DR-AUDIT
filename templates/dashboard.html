@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="mb-3"><h3 class="mb-0">Boshqaruv paneli</h3><p class="text-muted">Barcha ko‘rsatkichlar bazadagi real yozuvlardan hisoblanadi.</p></div>
+{% if demo %}<div class="alert alert-warning py-2"><i class="bi bi-info-circle"></i> Bazada <b>DEMO</b> ma‘lumotlar mavjud (DEMO TECHNOLOGY GROUP). Ular faqat namoyish uchun.</div>{% endif %}
+<div class="row g-3 mb-3">
+  {% include 'stat.html' with label="Tashkilotlar soni" value=stats.orgs icon="bi-building" color="primary" %}
+  {% include 'stat.html' with label="Aktiv auditlar" value=stats.active_audits icon="bi-clipboard-check" color="info" %}
+  {% include 'stat.html' with label="Jami xavflar" value=stats.risks icon="bi-exclamation-triangle" color="warning" %}
+  {% include 'stat.html' with label="Kritik xavflar" value=stats.critical icon="bi-radioactive" color="danger" %}
+  {% include 'stat.html' with label="BCP tayyorgarligi" value=stats.bcp suffix="%" icon="bi-diagram-3" color="primary" %}
+  {% include 'stat.html' with label="DRP tayyorgarligi" value=stats.drp suffix="%" icon="bi-arrow-repeat" color="info" %}
+  <div class="col-xl-3 col-md-6"><div class="card stat border-success"><div class="card-body"><div class="stat-icon text-success"><i class="bi bi-cloud-check"></i></div>
+    <div class="stat-label">Zaxira nusxalar holati</div><div class="stat-value">{{ stats.backup_ok }} / {{ stats.backup_total }}</div><small class="text-muted">muvaffaqiyatli</small></div></div></div>
+  {% include 'stat.html' with label="Ochiq hodisalar" value=stats.open_incidents icon="bi-shield-exclamation" color="danger" %}
+</div>
+<div class="row g-3">
+  <div class="col-lg-4"><div class="card"><div class="card-header">Xavflar taqsimoti</div><div class="card-body"><canvas id="cRisk"></canvas></div></div></div>
+  <div class="col-lg-4"><div class="card"><div class="card-header">Audit natijalari {% if stats.compliance != None %}<span class="badge bg-primary float-end">Muvofiqlik {{ stats.compliance }}%</span>{% endif %}</div><div class="card-body"><canvas id="cAudit"></canvas></div></div></div>
+  <div class="col-lg-4"><div class="card"><div class="card-header">Zaxira nusxalar holati</div><div class="card-body"><canvas id="cBackup"></canvas></div></div></div>
+  <div class="col-lg-6"><div class="card"><div class="card-header">Hodisalar statistikasi (jiddiylik bo‘yicha)</div><div class="card-body"><canvas id="cInc"></canvas></div></div></div>
+  <div class="col-lg-6"><div class="card"><div class="card-header">BCP va DRP tayyorgarligi (%)</div><div class="card-body"><canvas id="cReady"></canvas></div></div></div>
+  <div class="col-lg-6"><div class="card"><div class="card-header">Eng yuqori xavflar</div><ul class="list-group list-group-flush">
+    {% for r in top_risks %}<li class="list-group-item d-flex justify-content-between"><span>{{ r.threat|truncatechars:60 }}</span><span class="badge text-bg-{% if r.level == 'Kritik' %}danger{% elif r.level == 'Yuqori' %}warning{% elif r.level == 'Past' %}success{% else %}info{% endif %}">{{ r.score }} · {{ r.level }}</span></li>{% empty %}<li class="list-group-item text-muted">Xavflar yo‘q</li>{% endfor %}</ul></div></div>
+  <div class="col-lg-6"><div class="card"><div class="card-header">Ochiq hodisalar</div><ul class="list-group list-group-flush">
+    {% for i in recent %}<li class="list-group-item d-flex justify-content-between"><span>{{ i.incident_id }} · {{ i.incident_type }}</span><span class="badge text-bg-secondary">{{ i.status }}</span></li>{% empty %}<li class="list-group-item text-muted">Ochiq hodisalar yo‘q</li>{% endfor %}</ul></div></div>
+</div>
+{{ charts|json_script:"chartData" }}
+{% endblock %}
+{% block scripts %}
+{% load static %}<script src="{% static 'vendor/chart.umd.js' %}"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

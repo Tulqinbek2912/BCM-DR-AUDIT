@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+  <h4 class="mb-0"><i class="bi bi-grid-3x3-gap"></i> Risk matritsasi 5×5 — {% if residual %}qoldiq{% else %}dastlabki{% endif %} xavf</h4>
+  <form class="d-flex gap-2" method="get">
+    <select name="org" class="form-select"><option value="">Barcha tashkilotlar</option>{% for o in orgs %}<option value="{{ o.pk }}" {% if org == o.pk|stringformat:"s" %}selected{% endif %}>{{ o }}</option>{% endfor %}</select>
+    <select name="tur" class="form-select"><option value="">Dastlabki</option><option value="qoldiq" {% if residual %}selected{% endif %}>Qoldiq</option></select>
+    <button class="btn btn-primary">Ko‘rsatish</button></form>
+</div>
+<div class="card"><div class="card-body">
+<div class="matrix-wrap">
+  <div class="matrix-y">Ta‘sir (Impact) →</div>
+  <table class="matrix">
+    {% for imp, row in grid %}<tr><th>{{ imp }}</th>
+      {% for c in row %}<td class="lvl-{{ c.key }}" title="Ball: {{ c.score }} ({{ c.level }})">
+        <small class="sc">{{ c.score }}</small>{% if c.count %}<span class="cnt" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-html="true" data-bs-content="{% for r in c.risks %}• {{ r.threat|truncatechars:50 }}<br>{% endfor %}">{{ c.count }}</span>{% endif %}</td>{% endfor %}</tr>{% endfor %}
+    <tr><th></th>{% for i in "12345" %}<th>{{ i }}</th>{% endfor %}</tr>
+  </table>
+  <div class="text-center fw-semibold">Ehtimollik (Likelihood) →</div>
+</div>
+<div class="mt-3 d-flex flex-wrap gap-3 small">
+  <span><i class="legend lvl-low"></i> Past (1–4)</span><span><i class="legend lvl-mid"></i> O‘rta (5–9)</span>
+  <span><i class="legend lvl-high"></i> Yuqori (10–16)</span><span><i class="legend lvl-crit"></i> Kritik (17–25)</span>
+  <span class="ms-auto text-muted">Jami xavflar: {{ total }}. Raqamli doira — katakdagi xavflar soni (ustiga olib boring).</span>
+</div></div></div>
+{% endblock %}

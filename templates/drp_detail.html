@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="d-flex justify-content-between mb-3"><h4><i class="bi bi-arrow-repeat"></i> {{ sc.scenario_type }} {% if sc.is_demo %}<span class="badge bg-warning text-dark">DEMO</span>{% endif %}</h4>
+{% if can_write %}<a class="btn btn-outline-primary" href="{% url 'edit' 'drp' sc.pk %}"><i class="bi bi-pencil"></i> Tahrirlash</a>{% endif %}</div>
+<div class="row g-3">
+<div class="col-lg-5"><div class="card"><div class="card-body">
+  <dl class="row mb-0">
+    <dt class="col-5">Tashkilot</dt><dd class="col-7">{{ sc.organization }}</dd>
+    <dt class="col-5">Ustuvorlik</dt><dd class="col-7">{{ sc.priority }}</dd>
+    <dt class="col-5">Mas‘ul</dt><dd class="col-7">{{ sc.responsible }}</dd>
+    <dt class="col-5">Taxminiy vaqt</dt><dd class="col-7">{{ sc.estimated_hours }} soat</dd>
+    <dt class="col-5">Haqiqiy vaqt</dt><dd class="col-7">{{ sc.actual_hours|default:"—" }}{% if sc.actual_hours %} soat{% endif %}</dd>
+    <dt class="col-5">Holati</dt><dd class="col-7">{{ sc.status }}</dd>
+    <dt class="col-12 mt-2">Hodisa tavsifi</dt><dd class="col-12">{{ sc.description|linebreaksbr }}</dd>
+  </dl></div></div></div>
+<div class="col-lg-7"><div class="card"><div class="card-header">Tiklash nazorat ro‘yxati</div><div class="card-body">
+  <div class="progress mb-3" style="height:22px"><div class="progress-bar bg-success" id="prog" style="width:{{ sc.progress_pct }}%">{{ sc.progress_pct }}%</div></div>
+  <form id="stepForm">{% csrf_token %}</form>
+  {% for s in steps %}<div class="form-check mb-2"><input class="form-check-input step-chk" type="checkbox" id="s{{ s.pk }}" data-url="{% url 'drp_step' sc.pk s.pk %}" {% if s.done %}checked{% endif %} {% if not can_write %}disabled{% endif %}>
+    <label class="form-check-label {% if s.done %}text-decoration-line-through text-muted{% endif %}" for="s{{ s.pk }}">{{ forloop.counter }}. {{ s.text }}</label></div>
+  {% empty %}<p class="text-muted">Bosqichlar kiritilmagan.</p>{% endfor %}
+</div></div></div></div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="card col-lg-6 border-danger"><div class="card-body">
+<h4 class="text-danger"><i class="bi bi-exclamation-octagon"></i> O‘chirishni tasdiqlang</h4>
+<p><b>{{ cfg.single }}:</b> {{ obj }}</p>
+<p class="text-muted small">Bu amalni bekor qilib bo‘lmaydi. Bog‘liq yozuvlar ham (masalan, tashkilot o‘chirilsa uning barcha aktivlari, risklari, auditlari) o‘chiriladi.</p>
+<form method="post">{% csrf_token %}<button class="btn btn-danger">Ha, o‘chirish</button> <a class="btn btn-light" href="{% url 'list' key %}">Bekor qilish</a></form>
+</div></div>
+{% endblock %}

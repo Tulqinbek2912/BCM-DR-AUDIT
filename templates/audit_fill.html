@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block body %}
+<h4 class="mb-3"><i class="bi bi-ui-checks"></i> Baholash: {{ a.title }}</h4>
+<form method="post">{% csrf_token %}
+{% for cat, items in groups %}
+<div class="card mb-3"><div class="card-header"><b>{{ cat }}</b></div><div class="card-body">
+{% for i in items %}<div class="row g-2 mb-3 pb-3 border-bottom"><div class="col-lg-5"><b>{{ forloop.counter }}.</b> {{ i.question }}<br><small class="text-muted">{{ i.standard_ref }}</small></div>
+<div class="col-lg-3"><select class="form-select" name="a_{{ i.pk }}"><option value="">— Baholanmagan —</option>{% for x in answers %}<option value="{{ x }}" {% if i.answer == x %}selected{% endif %}>{{ x }}</option>{% endfor %}</select></div>
+<div class="col-lg-4"><textarea class="form-control" rows="2" name="c_{{ i.pk }}" placeholder="Auditor izohi">{{ i.comment }}</textarea></div></div>{% endfor %}
+</div></div>{% empty %}<div class="alert alert-secondary">Savollar yo‘q.</div>{% endfor %}
+<div class="sticky-save"><button class="btn btn-primary btn-lg"><i class="bi bi-check-lg"></i> Baholarni saqlash</button> <a class="btn btn-light btn-lg" href="{% url 'audit_detail' a.pk %}">Bekor qilish</a>
+<span class="text-muted small ms-2">Dalil faylini biriktirish uchun audit sahifasidagi savol yonidagi qalam tugmasidan foydalaning.</span></div>
+</form>
+{% endblock %}
