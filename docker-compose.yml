@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: bcm_audit
+      POSTGRES_USER: bcm
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-bcm_parol_ozgartiring}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bcm -d bcm_audit"]
+      interval: 5s
+      retries: 10
+  web:
+    build: .
+    depends_on:
+      db: {condition: service_healthy}
+    env_file: [.env]
+    environment:
+      DATABASE_URL: postgresql://bcm:${DB_PASSWORD:-bcm_parol_ozgartiring}@db:5432/bcm_audit
+    ports: ["8000:8000"]
+    volumes: [media:/app/media]
+volumes:
+  pgdata:
+  media:
