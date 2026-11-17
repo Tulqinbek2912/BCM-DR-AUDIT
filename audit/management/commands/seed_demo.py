@@ -27,16 +27,30 @@ class Command(BaseCommand):
         self.data()
         self.stdout.write(self.style.SUCCESS("DEMO ma‘lumotlar yaratildi."))
 
-    def users(self):
-        specs = [("admin", "Administrator", "admin", ADMIN_PW, True), ("auditor_demo", "Auditor Demo", "auditor", USER_PW, False),
-                 ("menejer_demo", "Menejer Demo", "manager", USER_PW, False), ("kuzatuvchi_demo", "Kuzatuvchi Demo", "viewer", USER_PW, False)]
+      def users(self):
+        specs = [
+            ("admin", "Administrator", "admin", ADMIN_PW, True),
+            ("auditor_demo", "Auditor Demo", "auditor", USER_PW, False),
+            ("menejer_demo", "Menejer Demo", "manager", USER_PW, False),
+            ("kuzatuvchi_demo", "Kuzatuvchi Demo", "viewer", USER_PW, False)
+        ]
+
         for un, name, role, pw, must in specs:
-            u, created = User.objects.get_or_create(username=un, defaults=dict(first_name=name.split()[0], last_name=" ".join(name.split()[1:]),
-                                                                              role=role, is_staff=role == "admin", is_superuser=role == "admin",
-                                                                              email=f"{un}@demo.local", must_change_password=must))
-            if created:
-                u.set_password(pw)
-                u.save()
+            u, created = User.objects.get_or_create(
+                username=un,
+                defaults={
+                    "first_name": name.split()[0],
+                    "last_name": " ".join(name.split()[1:]),
+                    "role": role,
+                    "email": f"{un}@demo.local"
+                }
+            )
+            u.set_password(pw)
+            u.is_active = True
+            u.is_staff = role == "admin"
+            u.is_superuser = role == "admin"
+            u.must_change_password = must
+            u.save()
 
     def data(self):
         now = timezone.now()
