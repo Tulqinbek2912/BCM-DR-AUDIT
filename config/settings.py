@@ -32,8 +32,8 @@ DEBUG = env_bool("DEBUG", True)
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-insecure-key-change-me")
 if not DEBUG and SECRET_KEY == "dev-insecure-key-change-me":
     raise ImproperlyConfigured("Production rejimida SECRET_KEY o‘rnatilishi shart.")
-ALLOWED_HOSTS = env_list("ALLOWED_HOSTS", "localhost,127.0.0.1,testserver")
-CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS")
+ALLOWED_HOSTS = env_list("ALLOWED_HOSTS", "localhost,127.0.0.1,testserver,bcm-dr-audit.onrender.com,bcm-dr-audit-1.onrender.com")
+CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS", "https://bcm-dr-audit.onrender.com,https://bcm-dr-audit-1.onrender.com")
 
 INSTALLED_APPS = [
     "django.contrib.admin", "django.contrib.auth", "django.contrib.contenttypes",
