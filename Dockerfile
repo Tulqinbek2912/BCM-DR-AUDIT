@@ -4,7 +4,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
-RUN adduser --disabled-password --gecos "" app && mkdir -p /app/media /app/staticfiles && chown -R app /app
+RUN adduser --disabled-password --gecos "" app && mkdir -p /app/media /app/staticfiles && chmod +x /app/entrypoint.sh && chown -R app /app
 USER app
 EXPOSE 8000
 ENTRYPOINT ["./entrypoint.sh"]
